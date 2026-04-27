@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - PatuKrishi</title>
+    <style>
+        body { font-family: Arial; background: #2e7d32; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .auth-card { background: white; padding: 30px; border-radius: 20px; width: 350px; text-align: center; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; }
+        button { background: #f9a825; padding: 12px; width: 100%; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin: 5px 0; }
+        .error { color: red; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <h2>🌾 PatuKrishi</h2>
+        <div id="loginDiv">
+            <input type="email" id="loginEmail" placeholder="Email">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button onclick="login()">Login</button>
+            <button onclick="showSignup()">Create Account</button>
+            <div id="errorMsg" class="error"></div>
+        </div>
+        <div id="signupDiv" style="display:none">
+            <input type="text" id="signupName" placeholder="Full Name">
+            <input type="email" id="signupEmail" placeholder="Email">
+            <input type="password" id="signupPassword" placeholder="Password (min 6)">
+            <button onclick="signup()">Sign Up</button>
+            <button onclick="showLogin()">Back to Login</button>
+            <div id="signupError" class="error"></div>
+        </div>
+    </div>
+    <script>
+        // TEMPORARY - Just to test (Replace with real Firebase)
+        function login() {
+            let email = document.getElementById('loginEmail').value;
+            let password = document.getElementById('loginPassword').value;
+            if(email && password) {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userEmail', email);
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('errorMsg').innerText = 'Enter email and password';
+            }
+        }
+        
+        function signup() {
+            let name = document.getElementById('signupName').value;
+            let email = document.getElementById('signupEmail').value;
+            let password = document.getElementById('signupPassword').value;
+            if(name && email && password.length >= 6) {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('patukrishi_user_name', name);
+                localStorage.setItem('userEmail', email);
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('signupError').innerText = 'Fill all fields. Password min 6 chars';
+            }
+        }
+        
+        function showSignup() {
+            document.getElementById('loginDiv').style.display = 'none';
+            document.getElementById('signupDiv').style.display = 'block';
+        }
+        
+        function showLogin() {
+            document.getElementById('signupDiv').style.display = 'none';
+            document.getElementById('loginDiv').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
