@@ -1,165 +1,4 @@
 
-// ==================== FIREBASE AUTHENTICATION (TOP LEVEL - NO IIFE) ====================
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js';
-import { 
-    getAuth, 
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword, 
-    sendEmailVerification, 
-    onAuthStateChanged, 
-    signOut 
-} from 'https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js';
-
-const firebaseConfig = {
-    apiKey: "AIzaSyABwrBm_QbUaHVGOF3ZzEqKgpInWVv7ZUk",
-    authDomain: "patukrishi-7184f.firebaseapp.com",
-    projectId: "patukrishi-7184f",
-    storageBucket: "patukrishi-7184f.firebasestorage.app",
-    messagingSenderId: "203440445325",
-    appId: "1:203440445325:web:d971b5e91ec3eed84d0fc4"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// ==================== FIREBASE AUTH FUNCTIONS ====================
-
-
-window.firebaseSignup = async () => {
-    const name = document.getElementById('signup-name')?.value.trim();
-    const email = document.getElementById('signup-email')?.value.trim();
-    const password = document.getElementById('signup-password')?.value;
-    const errorDiv = document.getElementById('signup-error');
-    if (!errorDiv) return;
-    
-    errorDiv.innerHTML = '';
-    errorDiv.style.color = '#d32f2f';
-    
-    if (!name || !email || !password) {
-        errorDiv.innerHTML = '❌ Please fill all fields';
-        return;
-    }
-    if (password.length < 6) {
-        errorDiv.innerHTML = '❌ Password must be at least 6 characters';
-        return;
-    }
-    
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await sendEmailVerification(userCredential.user);
-        localStorage.setItem('patukrishi_user_name', name);
-        errorDiv.style.color = '#2e7d32';
-        errorDiv.innerHTML = '✅ Account created! Verification email sent. Please check your inbox.';
-        
-        document.getElementById('signup-name').value = '';
-        document.getElementById('signup-email').value = '';
-        document.getElementById('signup-password').value = '';
-        
-        setTimeout(() => {
-            window.switchAuthTab('login');
-            const loginError = document.getElementById('login-error');
-            if (loginError) {
-                loginError.style.color = '#ff9800';
-                loginError.innerHTML = '📧 Please verify your email before logging in.';
-            }
-        }, 3000);
-    } catch (error) {
-        errorDiv.style.color = '#d32f2f';
-        if (error.code === 'auth/email-already-in-use') {
-            errorDiv.innerHTML = '❌ Email already registered. Please login.';
-        } else {
-            errorDiv.innerHTML = `❌ ${error.message}`;
-        }
-    }
-};
-
-window.firebaseLogin = async () => {
-    const email = document.getElementById('login-email')?.value.trim();
-    const password = document.getElementById('login-password')?.value;
-    const errorDiv = document.getElementById('login-error');
-    if (!errorDiv) return;
-    
-    errorDiv.innerHTML = '';
-    
-    if (!email || !password) {
-        errorDiv.innerHTML = '❌ Please enter both email and password';
-        return;
-    }
-    
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        if (!userCredential.user.emailVerified) {
-            errorDiv.style.color = '#ff9800';
-            errorDiv.innerHTML = '⚠️ Please verify your email first. Check your inbox. <button onclick="resendVerificationEmail()" style="background:#ff9800; color:#333; border:none; padding:5px 10px; border-radius:20px; margin-left:10px;">Resend</button>';
-            await signOut(auth);
-            return;
-        }
-        
-        errorDiv.style.color = '#2e7d32';
-        errorDiv.innerHTML = '✅ Login successful!';
-        
-        document.getElementById('auth-container').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        
-        const userName = localStorage.getItem('patukrishi_user_name') || email.split('@')[0];
-        const welcomeName = document.getElementById('welcome-name');
-        if (welcomeName) welcomeName.innerText = userName;
-        const headerName = document.getElementById('header-name');
-        if (headerName) headerName.innerText = userName;
-        const headerAvatar = document.getElementById('header-avatar');
-        if (headerAvatar) headerAvatar.innerText = userName.charAt(0).toUpperCase();
-        
-        document.getElementById('login-email').value = '';
-        document.getElementById('login-password').value = '';
-        
-        if (typeof showNotification === 'function') {
-            showNotification(`Welcome back, ${userName}! 🌾`, 'success');
-        }
-    } catch (error) {
-        errorDiv.style.color = '#d32f2f';
-        errorDiv.innerHTML = '❌ Invalid email or password';
-    }
-};
-
-window.resendVerificationEmail = async () => {
-    const user = auth.currentUser;
-    if (user && !user.emailVerified) {
-        await sendEmailVerification(user);
-        if (typeof showNotification === 'function') {
-            showNotification('✅ Verification email resent!', 'success');
-        }
-    }
-};
-
-
-
-onAuthStateChanged(auth, (user) => {
-    if (user && user.emailVerified) {
-        document.getElementById('auth-container').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        const userName = localStorage.getItem('patukrishi_user_name') || user.email.split('@')[0];
-        const welcomeName = document.getElementById('welcome-name');
-        if (welcomeName) welcomeName.innerText = userName;
-        const headerName = document.getElementById('header-name');
-        if (headerName) headerName.innerText = userName;
-        const headerAvatar = document.getElementById('header-avatar');
-        if (headerAvatar) headerAvatar.innerText = userName.charAt(0).toUpperCase();
-    } else if (user && !user.emailVerified) {
-        document.getElementById('auth-container').style.display = 'flex';
-        document.getElementById('dashboard').style.display = 'none';
-        window.switchAuthTab('login');
-        const loginError = document.getElementById('login-error');
-        if (loginError) {
-            loginError.style.color = '#ff9800';
-            loginError.innerHTML = '⚠️ Please verify your email before logging in.';
-        }
-    } else {
-        document.getElementById('auth-container').style.display = 'flex';
-        document.getElementById('dashboard').style.display = 'none';
-        window.switchAuthTab('login');
-    }
-});
-
 // ==================== MAIN APPLICATION CODE (IIFE FOR PRIVACY) ====================
 (function(){
     // ==================== SWIPER INITIALIZATION ====================
@@ -1692,7 +1531,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadingScreen.style.opacity = '0';
                 setTimeout(() => {
                     loadingScreen.style.display = 'none';
-// Firebase auth handled by onAuthStateChanged
                     updateTime();
                     setInterval(updateTime, 1e3);
                     updateTipOfTheDay();
@@ -2955,12 +2793,19 @@ window.filterSchemesByCategory = filterSchemesByCategory;
 window.renderAllSchemes = renderAllSchemes;
   // In your switchSection function, add:
 // ==================== AUTH CHECK ====================
+// ==================== AUTH CHECK ====================
 function checkAuth() {
-    const isLoggedIn = localStorage.getItem('isLoggedIn');
-    if (!isLoggedIn) {
+    const session = localStorage.getItem('patukrishi_session');
+    if (!session) {
         window.location.href = 'auth.html';
     }
 }
+
+// Logout function
+window.logout = function() {
+    localStorage.removeItem('patukrishi_session');
+    window.location.href = 'auth.html';
+};
 
 // Call when page loads
 document.addEventListener('DOMContentLoaded', function() {
