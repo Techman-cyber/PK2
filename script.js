@@ -1,3 +1,4 @@
+
 // ==================== FIREBASE AUTHENTICATION (TOP LEVEL - NO IIFE) ====================
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js';
 import { 
@@ -22,19 +23,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // ==================== FIREBASE AUTH FUNCTIONS ====================
-window.switchAuthTab = (tab) => {
-    const tabs = document.querySelectorAll('.auth-tab');
-    const forms = document.querySelectorAll('.auth-form');
-    tabs.forEach(t => t.classList.remove('active'));
-    forms.forEach(f => f.classList.remove('active'));
-    if (tab === 'login') {
-        tabs[0]?.classList.add('active');
-        document.getElementById('login-form')?.classList.add('active');
-    } else {
-        tabs[1]?.classList.add('active');
-        document.getElementById('signup-form')?.classList.add('active');
-    }
-};
+
 
 window.firebaseSignup = async () => {
     const name = document.getElementById('signup-name')?.value.trim();
@@ -142,14 +131,7 @@ window.resendVerificationEmail = async () => {
     }
 };
 
-window.logout = async () => {
-    await signOut(auth);
-    document.getElementById('dashboard').style.display = 'none';
-    document.getElementById('auth-container').style.display = 'flex';
-    if (typeof showNotification === 'function') {
-        showNotification('Logged out successfully', 'info');
-    }
-};
+
 
 onAuthStateChanged(auth, (user) => {
     if (user && user.emailVerified) {
@@ -2972,8 +2954,16 @@ window.closeSchemeModal = closeSchemeModal;
 window.filterSchemesByCategory = filterSchemesByCategory;
 window.renderAllSchemes = renderAllSchemes;
   // In your switchSection function, add:
-if(sectionId === 'videos') {
-    // Show videos section, hide others
+// ==================== AUTH CHECK ====================
+function checkAuth() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (!isLoggedIn) {
+        window.location.href = 'auth.html';
+    }
 }
-  
+
+// Call when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    checkAuth();
+});
 })();
