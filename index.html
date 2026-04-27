@@ -10,16 +10,8 @@
 
     <title>PatuKrishi · Smart Farming for Indian Farmers</title>
 
-    <!-- External CSS libraries -->
-<!-- Firebase Import Map -->
-<script type="importmap">
-    {
-        "imports": {
-            "firebase/app": "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js",
-            "firebase/auth": "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js"
-        }
-    }
-</script>
+    <!-- External CSS libraries -->p) -->
+<script>
 
     <link rel="icon" type="image/png" href="patukrishi logo.png">
 
@@ -55,6 +47,19 @@
 
         }
 </style>
+  <style>
+    /* Emergency CSS - makes website visible */
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
+    .auth-card { background: white; padding: 30px; border-radius: 20px; max-width: 400px; margin: 50px auto; }
+    input { width: 100%; padding: 10px; margin: 10px 0; }
+    button { background: #2e7d32; color: white; padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; }
+    .card { background: white; padding: 20px; border-radius: 15px; margin: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .dashboard-grid { display: flex; flex-wrap: wrap; }
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+    #auth-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    #dashboard { display: none; }
+</style>
    
 </head>
 
@@ -62,59 +67,13 @@
 
 <div id="loading-screen"><div class="loading-logo"><i class="fas fa-seedling"></i><h1>PatuKrishi</h1></div><div class="loading-bar"><div class="loading-fill"></div></div><p>Smart Farming for Indian Farmers</p></div>
 
-<!-- Firebase Auth Container with Email Verification -->
-<div id="auth-container">
-    <div class="auth-card">
-        <div class="auth-greeting">
-            <h1>🌾 Welcome to PatuKrishi 🙏</h1>
-            <p style="margin:20px 0">Smart Farming for Indian Farmers</p>
-            <p style="font-size:0.9rem; opacity:0.9;">✓ Email verification required ✓ Free forever</p>
-        </div>
-        <div class="auth-form-wrap">
-            <div class="auth-tabs">
-                <div class="auth-tab active" onclick="switchAuthTab('login')">Login</div>
-                <div class="auth-tab" onclick="switchAuthTab('signup')">Sign up</div>
-            </div>
-            
-            <!-- Login Form -->
-            <div id="login-form" class="auth-form active">
-                <div class="form-group">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" class="form-input" id="login-email" placeholder="farmer@example.com" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <input type="password" class="form-input" id="login-password" placeholder="••••••••" required>
-                </div>
-                <div id="login-error" class="error-message"></div>
-                <button class="btn-3d" style="width:100%" onclick="firebaseLogin()">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-            </div>
-            
-            <!-- Sign Up Form -->
-            <div id="signup-form" class="auth-form">
-                <div class="form-group">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-input" id="signup-name" placeholder="Your Name" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email Address</label>
-                    <input type="email" class="form-input" id="signup-email" placeholder="farmer@example.com" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Password (min 6 characters)</label>
-                    <input type="password" class="form-input" id="signup-password" placeholder="••••••••" required>
-                </div>
-                <div id="signup-error" class="error-message"></div>
-                <button class="btn-3d" style="width:100%" onclick="firebaseSignup()">
-                    <i class="fas fa-user-plus"></i> Create Account
-                </button>
-                <p style="font-size:0.75rem; text-align:center; margin-top:15px; color:var(--text2);">
-                    By signing up, you agree to receive a verification email.
-                </p>
-            </div>
-        </div>
+  <!-- Auth Link -->
+<div id="auth-container" style="text-align:center; padding:50px;">
+    <a href="auth.html" class="btn-3d" style="background:#2e7d32; color:white; padding:15px 30px; text-decoration:none; border-radius:50px;">
+        🌾 Login / Sign Up to Access Dashboard
+    </a>
+</div>
+
     </div>
 </div>
 
